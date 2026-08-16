@@ -1,0 +1,60 @@
+# config.yaml
+# Reference summary of parameters used in src/config.py.
+# (The actual source of truth is the Python file — this YAML is a
+#  human-readable snapshot for quick reference / reproducibility notes.)
+
+market:
+  risk_free_rate: 0.05
+  option_maturity_years: 1.0
+  reference_spot: 100.0
+  strike: 100.0
+  pairwise_correlation: 0.30
+  volatility_range: [0.10, 0.35]
+  base_seed: 42
+
+network:
+  hidden_units: 64
+  hidden_layers: 4
+  activation: tanh
+  optimizer: adam
+  learning_rate: 2.0e-3
+  epochs: 2000
+  data_batch_size: 128
+  collocation_batch_size: 128
+
+loss_weights:
+  lambda_data: 1.0
+  lambda_pde: 1.0
+  lambda_ic: 1.0
+  lambda_bc: 0.5
+
+data:
+  n_train_default: 800
+  n_test_default: 300
+  mc_paths_train_label: 4000
+  mc_paths_test_ground_truth: 60000
+  log_moneyness_half_width: 0.55
+
+experiments:
+  dimensions: [1, 2, 3, 5]
+  noise_levels: [0.0, 0.01, 0.05, 0.10]
+  sparsity_fractions: [1.0, 0.5, 0.25, 0.10, 0.05, 0.02]
+  fixed_dim_for_noise_and_sparsity: 3
+  extrapolation:
+    train_log_moneyness_bound: 0.15  # Liquid NTM zone where labeled data is observed
+    test_log_moneyness_bound: 0.55   # Full domain including illiquid tail-risk zones
+    fixed_dim_for_extrapolation: 3
+
+baselines:
+  fdm_1d:
+    method: crank_nicolson
+    spatial_points: 300
+    time_steps: 300
+  fdm_2d:
+    method: explicit_finite_difference
+    spatial_points_per_axis: 70
+    note: "not run for dim >= 3 (curse of dimensionality, by design)"
+  binomial_tree:
+    method: crr
+    steps: 250
+    note: "only applicable to dim = 1"
